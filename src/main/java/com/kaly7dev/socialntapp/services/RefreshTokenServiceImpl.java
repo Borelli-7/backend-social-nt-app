@@ -29,4 +29,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         refreshTokenRepo.findByToken(refreshToken)
                 .orElseThrow(() -> new SocialNtException("Invalid refresh token"));
     }
+
+    @Override
+    public void deleteRefreshToken(String refreshToken) {
+        refreshTokenRepo.deleteByToken(refreshToken);
+    }
 }

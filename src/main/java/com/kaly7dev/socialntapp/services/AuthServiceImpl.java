@@ -1,5 +1,7 @@
 package com.kaly7dev.socialntapp.services;
 
+import com.kaly7dev.socialntapp.coreapi.dtos.AuthenticationResponse;
+import com.kaly7dev.socialntapp.coreapi.dtos.LoginRequest;
 import com.kaly7dev.socialntapp.coreapi.dtos.RegisterRequest;
 import com.kaly7dev.socialntapp.coreapi.exceptions.SocialNtException;
 import com.kaly7dev.socialntapp.entities.User;
@@ -7,8 +9,12 @@ import com.kaly7dev.socialntapp.entities.VerificationToken;
 import com.kaly7dev.socialntapp.model.NotificationEmail;
 import com.kaly7dev.socialntapp.repositories.UserRepo;
 import com.kaly7dev.socialntapp.repositories.VerificationTokenRepo;
+import com.kaly7dev.socialntapp.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +36,9 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepo verificationTokenRepo;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
+    private final RefreshTokenService  refreshTokenService;
     @Override
     @Transactional(readOnly = true)
     public User getCurrentUser() {
@@ -65,6 +74,20 @@ public class AuthServiceImpl implements AuthService {
     public void verifyAccount(String token) {
         Optional<VerificationToken> verificationToken= verificationTokenRepo.findByToken(token);
         fetchUserAndEnable(verificationToken.orElseThrow(()->new SocialNtException("Invalid Token")));
+    }
+
+    @Override
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate= authenticationManager.authenticate(
+               new UsernamePasswordAuthenticationToken( loginRequest.getUsername(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token= jwtProvider.generateToken(authenticate);
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(loginRequest.getUsername())
+                .build();
     }
 
     private void fetchUserAndEnable(VerificationToken verificationToken) {

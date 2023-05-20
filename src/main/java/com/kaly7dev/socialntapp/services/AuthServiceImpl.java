@@ -2,6 +2,7 @@ package com.kaly7dev.socialntapp.services;
 
 import com.kaly7dev.socialntapp.coreapi.dtos.AuthenticationResponse;
 import com.kaly7dev.socialntapp.coreapi.dtos.LoginRequest;
+import com.kaly7dev.socialntapp.coreapi.dtos.RefreshTokenRequest;
 import com.kaly7dev.socialntapp.coreapi.dtos.RegisterRequest;
 import com.kaly7dev.socialntapp.coreapi.exceptions.SocialNtException;
 import com.kaly7dev.socialntapp.entities.User;
@@ -9,7 +10,7 @@ import com.kaly7dev.socialntapp.entities.VerificationToken;
 import com.kaly7dev.socialntapp.model.NotificationEmail;
 import com.kaly7dev.socialntapp.repositories.UserRepo;
 import com.kaly7dev.socialntapp.repositories.VerificationTokenRepo;
-import com.kaly7dev.socialntapp.security.JwtProvider;
+import com.kaly7dev.socialntapp.services.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -87,6 +88,18 @@ public class AuthServiceImpl implements AuthService {
                 .refreshToken(refreshTokenService.generateRefreshToken().getToken())
                 .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
                 .username(loginRequest.getUsername())
+                .build();
+    }
+
+    @Override
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String token= jwtProvider.generateTokenWithUsername(refreshTokenRequest.getUsername());
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken(refreshTokenRequest.getRefreshToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(refreshTokenRequest.getUsername())
                 .build();
     }
 

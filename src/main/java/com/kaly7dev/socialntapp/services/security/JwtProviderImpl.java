@@ -1,4 +1,4 @@
-package com.kaly7dev.socialntapp.security;
+package com.kaly7dev.socialntapp.services.security;
 
 import com.kaly7dev.socialntapp.entities.User;
 import lombok.RequiredArgsConstructor;
@@ -13,17 +13,19 @@ import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
-public class JwtProvider {
+public class JwtProviderImpl implements JwtProvider {
     private final JwtEncoder jwtEncoder;
     @Value("${jwt.expiration.time}")
     private Long jwtExpirationInMillis;
 
+    @Override
     public String generateToken(Authentication authentication){
         User principal = (User) authentication.getPrincipal();
         return generateTokenWithUsername(principal.getUsername());
     }
 
-    private String generateTokenWithUsername(String username) {
+    @Override
+    public String generateTokenWithUsername(String username) {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(Instant.now())
@@ -34,6 +36,7 @@ public class JwtProvider {
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
+    @Override
     public Long getJwtExpirationInMillis(){
         return jwtExpirationInMillis;
     }

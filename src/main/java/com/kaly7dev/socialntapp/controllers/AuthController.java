@@ -1,9 +1,11 @@
 package com.kaly7dev.socialntapp.controllers;
 
+import com.kaly7dev.socialntapp.coreapi.dtos.RefreshTokenRequest;
 import com.kaly7dev.socialntapp.services.AuthService;
 import com.kaly7dev.socialntapp.coreapi.dtos.RegisterRequest;
 import com.kaly7dev.socialntapp.coreapi.dtos.AuthenticationResponse;
 import com.kaly7dev.socialntapp.coreapi.dtos.LoginRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +31,9 @@ public class AuthController {
     @PostMapping("/login")
     public AuthenticationResponse login(@RequestBody LoginRequest loginRequest){
         return authService.login(loginRequest);
+    }
+    @PostMapping("/refresh/token")
+    public AuthenticationResponse refreshTokens(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest){
+        return authService.refreshToken(refreshTokenRequest);
     }
 }

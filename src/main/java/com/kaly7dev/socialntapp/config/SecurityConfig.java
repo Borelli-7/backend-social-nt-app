@@ -7,11 +7,9 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,7 +44,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity.cors().and()
                 .csrf().disable()
-                .authorizeHttpRequests(authorize -> authorize
+/*                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/subsocialnt").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/post/").permitAll()
@@ -59,7 +57,7 @@ public class SecurityConfig {
                                 "/webjars/**")
                         .permitAll()
                         .anyRequest()
-                        .authenticated())
+                        .authenticated())*/
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions

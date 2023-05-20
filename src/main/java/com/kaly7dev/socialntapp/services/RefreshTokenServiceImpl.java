@@ -1,5 +1,6 @@
 package com.kaly7dev.socialntapp.services;
 
+import com.kaly7dev.socialntapp.coreapi.exceptions.SocialNtException;
 import com.kaly7dev.socialntapp.entities.RefreshToken;
 import com.kaly7dev.socialntapp.repositories.RefreshTokenRepo;
 import lombok.AllArgsConstructor;
@@ -21,5 +22,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         refreshToken.setCreatedDate(Instant.now());
 
         return refreshTokenRepo.save(refreshToken);
+    }
+
+    @Override
+    public void validateRefreshToken(String refreshToken) {
+        refreshTokenRepo.findByToken(refreshToken)
+                .orElseThrow(() -> new SocialNtException("Invalid refresh token"));
     }
 }

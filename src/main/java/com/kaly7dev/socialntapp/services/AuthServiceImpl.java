@@ -1,6 +1,7 @@
 package com.kaly7dev.socialntapp.services;
 
 import com.kaly7dev.socialntapp.coreapi.dtos.RegisterRequest;
+import com.kaly7dev.socialntapp.coreapi.exceptions.SocialNtException;
 import com.kaly7dev.socialntapp.entities.User;
 import com.kaly7dev.socialntapp.entities.VerificationToken;
 import com.kaly7dev.socialntapp.model.NotificationEmail;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -57,6 +59,20 @@ public class AuthServiceImpl implements AuthService {
                 "please click on the below link url to activate your account : "+
                 "https://localhost:8080/api/auth/accountVerification/"+ token));
 
+    }
+
+    @Override
+    public void verifyAccount(String token) {
+        Optional<VerificationToken> verificationToken= verificationTokenRepo.findByToken(token);
+        fetchUserAndEnable(verificationToken.orElseThrow(()->new SocialNtException("Invalid Token")));
+    }
+
+    private void fetchUserAndEnable(VerificationToken verificationToken) {
+        String username= verificationToken.getUser().getUsername();
+        User user= userRepo.findByUsername(username).orElseThrow(
+                ()->new SocialNtException(" User Not found with name: "+ username));
+        user.setEnabled(true);
+        userRepo.save(user);
     }
 
     private String generateVerificationToken(User user) {

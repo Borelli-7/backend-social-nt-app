@@ -8,4 +8,6 @@ public interface AuthService {
     User getCurrentUser();
 
     void signup(RegisterRequest registerRequest);
+
+    void verifyAccount(String token);
 }

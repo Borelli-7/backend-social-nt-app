@@ -4,10 +4,7 @@ import com.kaly7dev.socialntapp.services.AuthService;
 import com.kaly7dev.socialntapp.coreapi.dtos.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -22,8 +19,10 @@ public class AuthController {
         return new ResponseEntity<>("User Registration Successful", OK);
     }
 
-/*    public ResponseEntity<String> verificationAccount(String token){
-        authService.verifyAccount
-    }*/
+    @GetMapping("/accountVerification/{token}")
+    public ResponseEntity<String> verificationAccount(@PathVariable String token){
+        authService.verifyAccount(token);
+        return new ResponseEntity<>("Accont activated successfully", OK);
+    }
 
 }

@@ -11,4 +11,6 @@ public interface PostService {
     List<PostResponse> getAllPosts();
 
     PostResponse getPost(Long id);
+
+    List<PostResponse> getPostListBySubsocialNt(Long subsocialntId);
 }

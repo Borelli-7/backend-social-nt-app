@@ -48,4 +48,13 @@ public class PostServiceImpl implements PostService {
                 ()->new PostNotFoundException(id.toString()));
         return postMapper.mapToDto(post);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostResponse> getPostListBySubsocialNt(Long subsocialntId) {
+        SubsocialNt subsocialNt= subsocialNtRepo.findById(subsocialntId)
+                .orElseThrow(()->new SubsocialNtNotFoundException(subsocialntId.toString()));
+        List<Post> postList= postRepo.findAllBySubsocialNt(subsocialNt);
+        return postList.stream().map(postMapper::mapToDto).toList();
+    }
 }

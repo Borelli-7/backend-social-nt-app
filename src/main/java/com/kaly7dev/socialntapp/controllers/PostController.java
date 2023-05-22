@@ -12,6 +12,7 @@ import com.kaly7dev.socialntapp.services.PostService;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.ResponseEntity.status;
 
 
 @RestController
@@ -27,6 +28,10 @@ public class PostController {
     }
     @GetMapping("/lists")
     public ResponseEntity<List<PostResponse>> getAllPosts(){
-        return ResponseEntity.status(OK).body(postService.getAllPosts());
+        return status(OK).body(postService.getAllPosts());
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<PostResponse> getPost(@PathVariable Long id ) {
+        return status(HttpStatus.OK).body(postService.getPost(id));
     }
 }

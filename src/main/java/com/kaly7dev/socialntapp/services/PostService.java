@@ -9,4 +9,6 @@ public interface PostService {
     void create(PostRequest postRequest);
 
     List<PostResponse> getAllPosts();
+
+    PostResponse getPost(Long id);
 }

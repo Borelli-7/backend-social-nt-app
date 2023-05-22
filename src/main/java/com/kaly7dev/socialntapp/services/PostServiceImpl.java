@@ -2,8 +2,10 @@ package com.kaly7dev.socialntapp.services;
 
 import com.kaly7dev.socialntapp.coreapi.dtos.PostRequest;
 import com.kaly7dev.socialntapp.coreapi.dtos.PostResponse;
+import com.kaly7dev.socialntapp.coreapi.exceptions.PostNotFoundException;
 import com.kaly7dev.socialntapp.coreapi.exceptions.SubsocialNtNotFoundException;
 import com.kaly7dev.socialntapp.coreapi.mappers.PostMapper;
+import com.kaly7dev.socialntapp.entities.Post;
 import com.kaly7dev.socialntapp.entities.SubsocialNt;
 import com.kaly7dev.socialntapp.repositories.PostRepo;
 import com.kaly7dev.socialntapp.repositories.SubsocialNtRepo;
@@ -37,5 +39,13 @@ public class PostServiceImpl implements PostService {
                 .stream()
                 .map(postMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PostResponse getPost(Long id) {
+        Post post = postRepo.findById(id).orElseThrow(
+                ()->new PostNotFoundException(id.toString()));
+        return postMapper.mapToDto(post);
     }
 }

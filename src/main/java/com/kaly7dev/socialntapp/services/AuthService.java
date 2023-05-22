@@ -17,4 +17,6 @@ public interface AuthService {
     AuthenticationResponse login(LoginRequest loginRequest);
 
     AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest);
+
+    boolean isLonggedIn();
 }

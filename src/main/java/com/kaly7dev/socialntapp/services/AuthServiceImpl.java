@@ -13,6 +13,7 @@ import com.kaly7dev.socialntapp.repositories.VerificationTokenRepo;
 import com.kaly7dev.socialntapp.services.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -101,6 +102,12 @@ public class AuthServiceImpl implements AuthService {
                 .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
                 .username(refreshTokenRequest.getUsername())
                 .build();
+    }
+
+    @Override
+    public boolean isLonggedIn() {
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
     }
 
     private void fetchUserAndEnable(VerificationToken verificationToken) {

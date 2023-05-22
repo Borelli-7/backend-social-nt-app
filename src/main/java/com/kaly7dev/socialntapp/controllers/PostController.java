@@ -38,4 +38,8 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> getPostListBySubsocialNt(@RequestParam Long subsocialntId) {
         return status(HttpStatus.OK).body(postService.getPostListBySubsocialNt(subsocialntId));
     }
+    @GetMapping(params = "username")
+    public ResponseEntity<List<PostResponse>> getPostListByUsername(@RequestParam String username) {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getPostListByUsername(username));
+    }
 }

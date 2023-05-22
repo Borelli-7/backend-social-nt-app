@@ -13,4 +13,6 @@ public interface PostService {
     PostResponse getPost(Long id);
 
     List<PostResponse> getPostListBySubsocialNt(Long subsocialntId);
+
+    List<PostResponse> getPostListByUsername(String username);
 }

@@ -4,11 +4,14 @@ import com.kaly7dev.socialntapp.coreapi.dtos.PostRequest;
 import com.kaly7dev.socialntapp.coreapi.dtos.PostResponse;
 import com.kaly7dev.socialntapp.coreapi.exceptions.PostNotFoundException;
 import com.kaly7dev.socialntapp.coreapi.exceptions.SubsocialNtNotFoundException;
+import com.kaly7dev.socialntapp.coreapi.exceptions.UserNotFoundException;
 import com.kaly7dev.socialntapp.coreapi.mappers.PostMapper;
 import com.kaly7dev.socialntapp.entities.Post;
 import com.kaly7dev.socialntapp.entities.SubsocialNt;
+import com.kaly7dev.socialntapp.entities.User;
 import com.kaly7dev.socialntapp.repositories.PostRepo;
 import com.kaly7dev.socialntapp.repositories.SubsocialNtRepo;
+import com.kaly7dev.socialntapp.repositories.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ public class PostServiceImpl implements PostService {
     private final SubsocialNtRepo subsocialNtRepo;
     private final PostMapper postMapper;
     private final AuthService authService;
+    private final UserRepo userRepo;
     @Override
     public void create(PostRequest postRequest) {
         SubsocialNt subsocialNt= subsocialNtRepo.findByName(postRequest.getSubsocialntName())
@@ -56,5 +60,16 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(()->new SubsocialNtNotFoundException(subsocialntId.toString()));
         List<Post> postList= postRepo.findAllBySubsocialNt(subsocialNt);
         return postList.stream().map(postMapper::mapToDto).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostResponse> getPostListByUsername(String username) {
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(()->new UserNotFoundException(username));
+        List<Post> postList= postRepo.findAllByUser(user);
+        return postList.stream()
+                .map(postMapper::mapToDto)
+                .toList();
     }
 }

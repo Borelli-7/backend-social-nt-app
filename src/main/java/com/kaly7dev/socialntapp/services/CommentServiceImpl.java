@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -41,6 +43,17 @@ public class CommentServiceImpl implements CommentService {
         String message= mailContentBuilder.build(
                 post.getUser().getUsername() + "posted a comment on your post. " + POST_URL);
         sendCommentNotification(message, post.getUser());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CommentsDto> getCommentListForPost(Long postId) {
+        Post post= postRepo.findById(postId)
+                .orElseThrow(()->new PostNotFoundException("Post not found with ID: "+postId.toString()));
+        return commentRepo.findByPost(post)
+                .stream()
+                .map(commentMapper::mapToDto)
+                .toList();
     }
 
     private void sendCommentNotification(String message, User user) {

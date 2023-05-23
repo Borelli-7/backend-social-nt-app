@@ -24,4 +24,9 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(commentService.getCommentListForPost(postId));
     }
+    @GetMapping(params = "username")
+    public ResponseEntity<List<CommentsDto>> getCommentListForUser(@RequestParam String username){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(commentService.getCommentListForUser(username));
+    }
 }

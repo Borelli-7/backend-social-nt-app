@@ -8,5 +8,7 @@ public interface CommentService {
     void createComment(CommentsDto commentsDto);
 
     List<CommentsDto> getCommentListForPost(Long postId);
+
+    List<CommentsDto> getCommentListForUser(String username);
 }
 

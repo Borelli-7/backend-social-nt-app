@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface SubsocialNtService {
     SubsocialNtDto createSubsocialNt(SubsocialNtDto subsocialNtDto);
-
     List<SubsocialNtDto> getSubsocialNtList();
+    SubsocialNtDto getSubsocialNt(Long id);
 }

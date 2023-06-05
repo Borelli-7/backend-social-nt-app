@@ -1,6 +1,7 @@
 package com.kaly7dev.socialntapp.services;
 
 import com.kaly7dev.socialntapp.coreapi.dtos.CommentsDto;
+import com.kaly7dev.socialntapp.coreapi.exceptions.SocialNtException;
 import com.kaly7dev.socialntapp.coreapi.exceptions.UserNotFoundException;
 import com.kaly7dev.socialntapp.coreapi.mappers.CommentMapper;
 import com.kaly7dev.socialntapp.coreapi.exceptions.PostNotFoundException;
@@ -73,5 +74,11 @@ public class CommentServiceImpl implements CommentService {
         mailService.sendMail(
                 new NotificationEmail(
                         user.getUsername() + " commented on your post", user.getEmail(), message));
+    }
+    public boolean containsSwearWords(String comment) {
+        if(comment.contains("shit")){
+            throw new SocialNtException("Comment contains unacceptable words");
+        }
+        return false;
     }
 }
